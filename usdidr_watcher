@@ -1,0 +1,13 @@
+#!/bin/bash
+
+src=$(curl -s --location --request GET 'https://www.bloomberg.com/quote/USDIDR:CUR' --header 'User-Agent:  Mozilla/5.0')
+percentage=$(echo $src | grep -oE "circle cx=\"\d+" | cut -d '"' -f2 | tail -1)
+price=$(echo $src | grep -oE "priceText[^\"]+\">([^<]+)" | cut -d '>' -f2)
+
+if [ $percentage -gt 80 ]; then
+  osascript -e 'display notification "YTD percentage : '"$percentage"'%\nPrice : '"$price"'" with title "Sell USD!"'
+fi
+
+if [ $percentage -lt 20 ]; then
+  osascript -e 'display notification "YTD percentage : '"$percentage"'%\nPrice : '"$price"'" with title "Buy USD!"'
+fi
